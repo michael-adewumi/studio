@@ -1,108 +1,22 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import { SHEET_URL } from '@/config.js'
+import { useForm } from '@/composables/useForm'
 import BaseInput from './BaseInput.vue'
 
-const form = reactive({
-  name: '',
-  email: '',
-  phone: '',
-  project: '',
-  _honey: '' // honeypot — never filled by real users
-})
+const { fields, errors, status, submit } = useForm(
+  {
+    name: '',
+    email: '',
+    phone: '',
+    project: ''
+  },
+  'contact-form'
+)
 
-const errors = reactive({
-  name: '',
-  email: '',
-  phone: ''
-})
-
-const state = ref('idle') // idle | loading | success | error
-const lastSubmit = ref(0)
-
-const validate = () => {
-  let isValid = true
-  errors.name = ''
-  errors.email = ''
-  errors.phone = ''
-
-  // Name validation: alphabets, spaces, hyphens, apostrophes
-  const namePattern = /^[A-Za-z\s'-]+$/
-  if (!form.name.trim()) {
-    errors.name = 'Name is required'
-    isValid = false
-  } else if (!namePattern.test(form.name.trim())) {
-    errors.name = 'Only letters, spaces, hyphens, and apostrophes allowed'
-    isValid = false
-  }
-
-  // Email validation
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!form.email.trim()) {
-    errors.email = 'Email is required'
-    isValid = false
-  } else if (!emailPattern.test(form.email.trim())) {
-    errors.email = 'Please enter a valid email address'
-    isValid = false
-  }
-
-  // Phone validation: US (strictly 10 digits)
-  if (form.phone) {
-    const digitsOnly = form.phone.replace(/\D/g, '')
-    if (digitsOnly.length !== 10 || /\D/.test(form.phone)) {
-      errors.phone = 'Phone must be exactly 10 digits (no other characters)'
-      isValid = false
-    }
-  }
-
-  return isValid
-}
-
-const submit = async () => {
-  // Honeypot — silently block bots
-  if (form._honey) return
-
-  // Rate limit — block if submitted less than 30s ago
-  const now = Date.now()
-  if (now - lastSubmit.value < 30000) return
-
-  // Prevent double submission
-  if (state.value === 'loading') return
-
-  // Validate fields
-  if (!validate()) return
-
-  lastSubmit.value = now
-  state.value = 'loading'
-
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({
-        name: form.name.trim(),
-        email: form.email.trim().toLowerCase(),
-        phone: form.phone.trim(),
-        project: form.project.trim(),
-        source: 'contact-form'
-      })
-    })
-
-    state.value = 'success'
-    // Clear form
-    Object.keys(form).forEach(k => (form[k] = ''))
-    
-    // Auto-reset state after 5 seconds to allow another submission
-    setTimeout(() => {
-      if (state.value === 'success') {
-        state.value = 'idle'
-      }
-    }, 5000)
-  } catch {
-    state.value = 'error'
-  }
+const handleSubmit = async () => {
+  await submit()
 }
 </script>
+
 
 <template>
   <section id="contact" class="section-padding pt-8">
@@ -135,11 +49,11 @@ const submit = async () => {
           </div>
 
           <!-- Right: form -->
-          <form class="space-y-4" @submit.prevent="submit">
+          <form class="space-y-4" @submit.prevent="handleSubmit">
 
             <!-- Honeypot — hidden from real users, bots fill it in -->
             <input
-              v-model="form._honey"
+              v-model="fields._honey"
               type="text"
               name="website"
               autocomplete="off"
@@ -151,47 +65,47 @@ const submit = async () => {
             <div class="grid gap-4 sm:grid-cols-2">
               <BaseInput
                 id="contact-name"
-                v-model="form.name"
+                v-model="fields.name"
                 label="Name"
                 placeholder="Jane Smith"
                 required
                 variant="dark"
                 :error="errors.name"
-                :disabled="state === 'loading' || state === 'success'"
+                :disabled="status === 'loading' || status === 'success'"
               />
               <BaseInput
                 id="contact-email"
-                v-model="form.email"
+                v-model="fields.email"
                 type="email"
                 label="Email"
                 placeholder="jane@company.com"
                 required
                 variant="dark"
                 :error="errors.email"
-                :disabled="state === 'loading' || state === 'success'"
+                :disabled="status === 'loading' || status === 'success'"
               />
             </div>
 
             <BaseInput
               id="contact-phone"
-              v-model="form.phone"
+              v-model="fields.phone"
               type="tel"
               label="Phone"
               placeholder="1234567890"
               variant="dark"
               :error="errors.phone"
-              :disabled="state === 'loading' || state === 'success'"
+              :disabled="status === 'loading' || status === 'success'"
             />
 
             <BaseInput
               id="contact-project"
-              v-model="form.project"
+              v-model="fields.project"
               type="textarea"
               label="Project"
               placeholder="Tell me about your business and what you're looking to build..."
               required
               variant="dark"
-              :disabled="state === 'loading' || state === 'success'"
+              :disabled="status === 'loading' || status === 'success'"
             />
 
             <!-- Success -->
@@ -201,7 +115,7 @@ const submit = async () => {
               enter-to-class="opacity-100 translate-y-0"
             >
               <div
-                v-if="state === 'success'"
+                v-if="status === 'success'"
                 class="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-400"
               >
                 ✓ Message received! I'll be in touch within 24 hours.
@@ -209,7 +123,7 @@ const submit = async () => {
             </Transition>
 
             <!-- Error -->
-            <p v-if="state === 'error'" class="text-sm text-rose-400">
+            <p v-if="status === 'error'" class="text-sm text-rose-400">
               Something went wrong. Email me directly at
               <a href="mailto:hello@northstudio.design" class="underline">
                 hello@northstudio.design
@@ -218,11 +132,11 @@ const submit = async () => {
 
             <button
               type="submit"
-              :disabled="state === 'loading' || state === 'success'"
+              :disabled="status === 'loading' || status === 'success'"
               class="btn-primary w-full justify-center py-3.5 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <span v-if="state === 'loading'">Sending…</span>
-              <span v-else-if="state === 'success'">Message Sent ✓</span>
+              <span v-if="status === 'loading'">Sending…</span>
+              <span v-else-if="status === 'success'">Message Sent ✓</span>
               <span v-else>Send Message →</span>
             </button>
 

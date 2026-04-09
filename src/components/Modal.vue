@@ -1,17 +1,16 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { SHEET_URL } from '@/config.js'
+import { useForm } from '@/composables/useForm'
 import BaseInput from './BaseInput.vue'
 
 const emit = defineEmits(['submit-email'])
 
 const isOpen = ref(false)
 const hasTriggered = ref(false)
-const email = ref('')
-const honey = ref('') // honeypot
-const state = ref('idle') // idle | loading | success | error
-const validationError = ref('')
-const lastSubmit = ref(0)
+const { fields, errors, status, submit, reset } = useForm(
+  { email: '' },
+  'email-popup'
+)
 
 let timeoutId
 
@@ -24,10 +23,9 @@ const openModal = () => {
 
 const closeModal = () => {
   isOpen.value = false
-  // Reset state after a short delay so the user doesn't see the form flip back instantly
+  // Reset form status after modal closes
   setTimeout(() => {
-    state.value = 'idle'
-    validationError.value = ''
+    reset()
   }, 300)
 }
 
@@ -35,46 +33,12 @@ const handleExitIntent = (event) => {
   if (event.clientY <= 8) openModal()
 }
 
-const submitEmail = async () => {
-  // Honeypot check
-  if (honey.value) return
-
-  // Rate limit
-  const now = Date.now()
-  if (now - lastSubmit.value < 30000) return
-
-  // Prevent double submission
-  if (state.value === 'loading') return
-
-  // Validate email
-  const normalizedEmail = email.value.trim().toLowerCase()
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-  if (!emailPattern.test(normalizedEmail)) {
-    validationError.value = 'Please enter a valid email address.'
-    return
-  }
-
-  validationError.value = ''
-  lastSubmit.value = now
-  state.value = 'loading'
-
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({
-        email: normalizedEmail,
-        source: 'email-popup'
-      })
-    })
-
-    emit('submit-email', normalizedEmail)
-    state.value = 'success'
-    email.value = ''
+const handleSubmit = async () => {
+  const emailVal = fields.email
+  const success = await submit()
+  if (success) {
+    emit('submit-email', emailVal)
     setTimeout(() => closeModal(), 1800)
-  } catch {
-    state.value = 'error'
   }
 }
 
@@ -93,6 +57,7 @@ onBeforeUnmount(() => {
   document.body.style.overflow = ''
 })
 </script>
+
 
 <template>
   <Transition
@@ -150,11 +115,11 @@ onBeforeUnmount(() => {
             I'll send a quick review with 3 practical ways your website can look stronger and convert better.
           </p>
 
-          <form class="mt-6 space-y-4 sm:mt-8" @submit.prevent="submitEmail">
+          <form class="mt-6 space-y-4 sm:mt-8" @submit.prevent="handleSubmit">
 
             <!-- Honeypot — hidden from real users -->
             <input
-              v-model="honey"
+              v-model="fields._honey"
               type="text"
               name="website"
               autocomplete="off"
@@ -165,13 +130,13 @@ onBeforeUnmount(() => {
 
             <BaseInput
               id="newsletter-email"
-              v-model="email"
+              v-model="fields.email"
               type="email"
               label="Email address"
               placeholder="you@company.com"
               required
-              :error="validationError"
-              :disabled="state === 'loading' || state === 'success'"
+              :error="errors.email"
+              :disabled="status === 'loading' || status === 'success'"
             />
 
             <!-- Success -->
@@ -181,7 +146,7 @@ onBeforeUnmount(() => {
               enter-to-class="opacity-100 translate-y-0"
             >
               <div
-                v-if="state === 'success'"
+                v-if="status === 'success'"
                 class="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"
               >
                 ✓ You're in! Check your inbox shortly.
@@ -189,17 +154,17 @@ onBeforeUnmount(() => {
             </Transition>
 
             <!-- Fetch error -->
-            <p v-if="state === 'error'" class="text-sm text-rose-500">
+            <p v-if="status === 'error'" class="text-sm text-rose-500">
               Something went wrong. Please try again.
             </p>
 
             <button
               type="submit"
-              :disabled="state === 'loading' || state === 'success'"
+              :disabled="status === 'loading' || status === 'success'"
               class="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <span v-if="state === 'loading'">Sending…</span>
-              <span v-else-if="state === 'success'">Submitted ✓</span>
+              <span v-if="status === 'loading'">Sending…</span>
+              <span v-else-if="status === 'success'">Submitted ✓</span>
               <span v-else>Send My Free Audit</span>
             </button>
 
