@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { SHEET_URL } from '@/config.js'
+import BaseInput from './BaseInput.vue'
 
 const form = reactive({
   name: '',
@@ -10,11 +11,52 @@ const form = reactive({
   _honey: '' // honeypot — never filled by real users
 })
 
+const errors = reactive({
+  name: '',
+  email: '',
+  phone: ''
+})
+
 const state = ref('idle') // idle | loading | success | error
 const lastSubmit = ref(0)
 
-const inputClass =
-  'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500'
+const validate = () => {
+  let isValid = true
+  errors.name = ''
+  errors.email = ''
+  errors.phone = ''
+
+  // Name validation: alphabets, spaces, hyphens, apostrophes
+  const namePattern = /^[A-Za-z\s'-]+$/
+  if (!form.name.trim()) {
+    errors.name = 'Name is required'
+    isValid = false
+  } else if (!namePattern.test(form.name.trim())) {
+    errors.name = 'Only letters, spaces, hyphens, and apostrophes allowed'
+    isValid = false
+  }
+
+  // Email validation
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!form.email.trim()) {
+    errors.email = 'Email is required'
+    isValid = false
+  } else if (!emailPattern.test(form.email.trim())) {
+    errors.email = 'Please enter a valid email address'
+    isValid = false
+  }
+
+  // Phone validation: US (strictly 10 digits)
+  if (form.phone) {
+    const digitsOnly = form.phone.replace(/\D/g, '')
+    if (digitsOnly.length !== 10 || /\D/.test(form.phone)) {
+      errors.phone = 'Phone must be exactly 10 digits (no other characters)'
+      isValid = false
+    }
+  }
+
+  return isValid
+}
 
 const submit = async () => {
   // Honeypot — silently block bots
@@ -27,12 +69,8 @@ const submit = async () => {
   // Prevent double submission
   if (state.value === 'loading') return
 
-  // Email validation
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailPattern.test(form.email.trim())) {
-    state.value = 'error'
-    return
-  }
+  // Validate fields
+  if (!validate()) return
 
   lastSubmit.value = now
   state.value = 'loading'
@@ -51,7 +89,15 @@ const submit = async () => {
     })
 
     state.value = 'success'
+    // Clear form
     Object.keys(form).forEach(k => (form[k] = ''))
+    
+    // Auto-reset state after 5 seconds to allow another submission
+    setTimeout(() => {
+      if (state.value === 'success') {
+        state.value = 'idle'
+      }
+    }, 5000)
   } catch {
     state.value = 'error'
   }
@@ -103,60 +149,64 @@ const submit = async () => {
             />
 
             <div class="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label class="mb-1.5 block text-sm font-medium text-slate-400">Name</label>
-                <input
-                  v-model="form.name"
-                  type="text"
-                  required
-                  placeholder="Jane Smith"
-                  :disabled="state === 'loading' || state === 'success'"
-                  :class="inputClass + ' disabled:opacity-50'"
-                />
-              </div>
-              <div>
-                <label class="mb-1.5 block text-sm font-medium text-slate-400">Email</label>
-                <input
-                  v-model="form.email"
-                  type="email"
-                  required
-                  placeholder="jane@company.com"
-                  :disabled="state === 'loading' || state === 'success'"
-                  :class="inputClass + ' disabled:opacity-50'"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label class="mb-1.5 block text-sm font-medium text-slate-400">Phone</label>
-              <input
-                v-model="form.phone"
-                type="tel"
-                placeholder="+1 234 567 8900"
-                :disabled="state === 'loading' || state === 'success'"
-                :class="inputClass + ' disabled:opacity-50'"
-              />
-            </div>
-
-            <div>
-              <label class="mb-1.5 block text-sm font-medium text-slate-400">Project</label>
-              <textarea
-                v-model="form.project"
-                rows="4"
+              <BaseInput
+                id="contact-name"
+                v-model="form.name"
+                label="Name"
+                placeholder="Jane Smith"
                 required
-                placeholder="Tell me about your business and what you're looking to build..."
+                variant="dark"
+                :error="errors.name"
                 :disabled="state === 'loading' || state === 'success'"
-                :class="inputClass + ' resize-none disabled:opacity-50'"
+              />
+              <BaseInput
+                id="contact-email"
+                v-model="form.email"
+                type="email"
+                label="Email"
+                placeholder="jane@company.com"
+                required
+                variant="dark"
+                :error="errors.email"
+                :disabled="state === 'loading' || state === 'success'"
               />
             </div>
+
+            <BaseInput
+              id="contact-phone"
+              v-model="form.phone"
+              type="tel"
+              label="Phone"
+              placeholder="1234567890"
+              variant="dark"
+              :error="errors.phone"
+              :disabled="state === 'loading' || state === 'success'"
+            />
+
+            <BaseInput
+              id="contact-project"
+              v-model="form.project"
+              type="textarea"
+              label="Project"
+              placeholder="Tell me about your business and what you're looking to build..."
+              required
+              variant="dark"
+              :disabled="state === 'loading' || state === 'success'"
+            />
 
             <!-- Success -->
-            <div
-              v-if="state === 'success'"
-              class="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-400"
+            <Transition
+              enter-active-class="transition duration-300 ease-out"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
             >
-              ✓ Message received! I'll be in touch within 24 hours.
-            </div>
+              <div
+                v-if="state === 'success'"
+                class="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-400"
+              >
+                ✓ Message received! I'll be in touch within 24 hours.
+              </div>
+            </Transition>
 
             <!-- Error -->
             <p v-if="state === 'error'" class="text-sm text-rose-400">

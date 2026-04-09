@@ -5,7 +5,7 @@
   >
     <div class="container-shell section-padding grid items-center gap-10 sm:gap-14 lg:grid-cols-[1.05fr_0.95fr]">
       <div v-reveal="{ origin: 'left' }">
-        <span class="eyebrow">Web Designer</span>
+        <span class="eyebrow">Web Developer</span>
         <h1 class="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-tight text-slate-950 sm:mt-7 sm:text-6xl lg:text-7xl dark:text-white">
           I build websites that bring you customers
         </h1>

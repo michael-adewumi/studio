@@ -1,6 +1,7 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { SHEET_URL } from '@/config.js'
+import BaseInput from './BaseInput.vue'
 
 const emit = defineEmits(['submit-email'])
 
@@ -23,6 +24,11 @@ const openModal = () => {
 
 const closeModal = () => {
   isOpen.value = false
+  // Reset state after a short delay so the user doesn't see the form flip back instantly
+  setTimeout(() => {
+    state.value = 'idle'
+    validationError.value = ''
+  }, 300)
 }
 
 const handleExitIntent = (event) => {
@@ -157,33 +163,30 @@ onBeforeUnmount(() => {
               class="hidden"
             />
 
-            <div>
-              <label for="newsletter-email" class="mb-2 block text-sm font-medium text-slate-700">
-                Email address
-              </label>
-              <input
-                id="newsletter-email"
-                v-model="email"
-                type="email"
-                autocomplete="email"
-                placeholder="you@company.com"
-                :disabled="state === 'loading' || state === 'success'"
-                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-950 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 disabled:opacity-60"
-              />
-            </div>
-
-            <!-- Validation error -->
-            <p v-if="validationError" class="text-sm font-medium text-rose-500">
-              {{ validationError }}
-            </p>
+            <BaseInput
+              id="newsletter-email"
+              v-model="email"
+              type="email"
+              label="Email address"
+              placeholder="you@company.com"
+              required
+              :error="validationError"
+              :disabled="state === 'loading' || state === 'success'"
+            />
 
             <!-- Success -->
-            <div
-              v-if="state === 'success'"
-              class="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"
+            <Transition
+              enter-active-class="transition duration-300 ease-out"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
             >
-              ✓ You're in! Check your inbox shortly.
-            </div>
+              <div
+                v-if="state === 'success'"
+                class="rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"
+              >
+                ✓ You're in! Check your inbox shortly.
+              </div>
+            </Transition>
 
             <!-- Fetch error -->
             <p v-if="state === 'error'" class="text-sm text-rose-500">
