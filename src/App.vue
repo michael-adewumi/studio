@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useDarkMode } from './composables/useDarkMode'
+import UnderConstruction from '@/components/UnderConstruction.vue'
 import Navbar from '@/components/Navbar.vue'
 import Hero from '@/components/Hero.vue'
 import About from '@/components/About.vue'
@@ -11,6 +12,11 @@ import Testimonials from '@/components/Testimonials.vue'
 import CTA from '@/components/CTA.vue'
 import SiteFooter from '@/components/Footer.vue'
 import Modal from '@/components/Modal.vue'
+
+// ──────────────────────────────────────────────────────────
+// TEMPORARY FLAG: Set to false to restore the full portfolio
+// ──────────────────────────────────────────────────────────
+const showUnderConstruction = true
 
 const { isDark, toggle } = useDarkMode()
 
@@ -24,7 +30,11 @@ const handleEmailCapture = (email) => {
 </script>
 
 <template>
-  <div class="relative min-h-screen bg-[#f8f7f4] text-slate-900 dark:bg-[#0d1117] dark:text-slate-100">
+  <!-- Temporary under-construction landing page -->
+  <UnderConstruction v-if="showUnderConstruction" />
+
+  <!-- Original portfolio (preserved, hidden while under construction) -->
+  <div v-else class="relative min-h-screen bg-[#f8f7f4] text-slate-900 dark:bg-[#0d1117] dark:text-slate-100">
     <div class="pointer-events-none fixed inset-0 overflow-hidden">
       <div class="absolute -left-28 top-0 h-72 w-72 rounded-full bg-brand-100/70 blur-3xl dark:bg-brand-600/15" />
       <div class="absolute right-0 top-48 h-80 w-80 rounded-full bg-sky-100/70 blur-3xl dark:bg-sky-600/10" />
