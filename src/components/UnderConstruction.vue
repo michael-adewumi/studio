@@ -10,7 +10,7 @@ onMounted(() => {
   })
 })
 
-const email = 'hello@northstudio.design'
+const email = 'adewumimicheal00@gmail.com'
 const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
 </script>
 
