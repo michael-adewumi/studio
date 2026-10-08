@@ -1,33 +1,26 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
 
-const isVisible = ref(false)
+const isVisible = ref(false);
 
 onMounted(() => {
-  // Trigger entrance animation after mount
   requestAnimationFrame(() => {
-    isVisible.value = true
-  })
-})
+    isVisible.value = true;
+  });
+});
 
-const email = 'adewumimicheal00@gmail.com'
-const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
+const email = "adewumimicheal00@gmail.com";
+const linkedinUrl = "https://www.linkedin.com/in/michael-adewumi/";
 </script>
 
 <template>
   <div class="uc-page">
-    <!-- Background layers -->
     <div class="uc-bg-grid" aria-hidden="true" />
     <div class="uc-bg-glow uc-bg-glow--top" aria-hidden="true" />
     <div class="uc-bg-glow uc-bg-glow--center" aria-hidden="true" />
     <div class="uc-bg-glow uc-bg-glow--bottom" aria-hidden="true" />
 
-    <!-- Content -->
-    <div
-      class="uc-content"
-      :class="{ 'uc-content--visible': isVisible }"
-    >
-      <!-- Header -->
+    <div class="uc-content" :class="{ 'uc-content--visible': isVisible }">
       <header class="uc-header">
         <h1 class="uc-name">MICHAEL ADEWUMI</h1>
         <span class="uc-status-pill" role="status">
@@ -36,33 +29,27 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
         </span>
       </header>
 
-      <!-- Main -->
       <main class="uc-main">
-        <!-- Status indicator -->
         <div class="uc-status-indicator" role="status">
           <span class="uc-pulse-dot" aria-hidden="true" />
           <span class="uc-status-text">Currently being revamped</span>
         </div>
 
-        <!-- Headline -->
         <h2 class="uc-headline">
           A sharper portfolio is
           <span class="uc-headline__gradient">on the way.</span>
         </h2>
 
-        <!-- Supporting text -->
         <p class="uc-description">
           I'm currently rebuilding my portfolio to better showcase the
           applications, interfaces, and engineering work I've been building.
         </p>
 
-        <!-- Professional identity -->
         <div class="uc-identity">
           <span class="uc-role">FRONTEND ENGINEER</span>
           <span class="uc-tech-line">Vue · React · TypeScript · Next.js</span>
         </div>
 
-        <!-- CTAs -->
         <div class="uc-ctas">
           <a
             :href="linkedinUrl"
@@ -78,15 +65,14 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
               fill="currentColor"
               aria-hidden="true"
             >
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              <path
+                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+              />
             </svg>
             Connect on LinkedIn
           </a>
 
-          <a
-            :href="`mailto:${email}`"
-            class="uc-btn uc-btn--secondary"
-          >
+          <a :href="`mailto:${email}`" class="uc-btn uc-btn--secondary">
             <svg
               class="uc-btn__icon"
               width="18"
@@ -107,7 +93,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
         </div>
       </main>
 
-      <!-- Footer -->
       <footer class="uc-footer">
         <p class="uc-footer__text">
           Thanks for stopping by. The new portfolio will be back soon.
@@ -118,12 +103,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
 </template>
 
 <style scoped>
-/* ======================================
-   Under Construction Page
-   Dark navy/charcoal with cyan accents
-   ====================================== */
-
-/* Page container */
 .uc-page {
   position: relative;
   display: flex;
@@ -134,10 +113,9 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   overflow: hidden;
   background-color: #0a0f1a;
   color: #e2e8f0;
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ---- Background layers ---- */
 .uc-bg-grid {
   position: absolute;
   inset: 0;
@@ -145,8 +123,16 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
     linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
   background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 80%);
+  mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 50%,
+    black 30%,
+    transparent 80%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 50%,
+    black 30%,
+    transparent 80%
+  );
 }
 
 .uc-bg-glow {
@@ -162,7 +148,11 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   width: 600px;
   height: 400px;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.08) 0%,
+    transparent 70%
+  );
 }
 
 .uc-bg-glow--center {
@@ -171,7 +161,11 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   width: 500px;
   height: 500px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(6, 182, 212, 0.06) 0%,
+    transparent 70%
+  );
 }
 
 .uc-bg-glow--bottom {
@@ -179,10 +173,13 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   right: -10%;
   width: 450px;
   height: 450px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.05) 0%,
+    transparent 70%
+  );
 }
 
-/* ---- Content wrapper ---- */
 .uc-content {
   position: relative;
   z-index: 10;
@@ -198,11 +195,11 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   justify-content: center;
   gap: 0;
 
-  /* Entrance animation */
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
-              transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .uc-content--visible {
@@ -218,7 +215,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   }
 }
 
-/* ---- Header ---- */
 .uc-header {
   display: flex;
   flex-direction: column;
@@ -228,7 +224,7 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
 }
 
 .uc-name {
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.25em;
@@ -265,7 +261,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   }
 }
 
-/* ---- Main content ---- */
 .uc-main {
   display: flex;
   flex-direction: column;
@@ -273,7 +268,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   gap: 0;
 }
 
-/* Status indicator */
 .uc-status-indicator {
   display: flex;
   align-items: center;
@@ -305,9 +299,8 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   color: #67e8f9;
 }
 
-/* Headline */
 .uc-headline {
-  font-family: 'Poppins', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: "Poppins", "Inter", ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(1.75rem, 5vw, 3rem);
   font-weight: 600;
   line-height: 1.2;
@@ -323,7 +316,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   -webkit-text-fill-color: transparent;
 }
 
-/* Description */
 .uc-description {
   font-size: clamp(0.9375rem, 2.5vw, 1.0625rem);
   line-height: 1.7;
@@ -332,7 +324,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   margin: 0 0 2rem;
 }
 
-/* Identity block */
 .uc-identity {
   display: flex;
   flex-direction: column;
@@ -361,7 +352,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   letter-spacing: 0.04em;
 }
 
-/* CTAs */
 .uc-ctas {
   display: flex;
   flex-wrap: wrap;
@@ -393,7 +383,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   flex-shrink: 0;
 }
 
-/* Primary CTA */
 .uc-btn--primary {
   background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
   color: #fff;
@@ -411,7 +400,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   transform: translateY(0);
 }
 
-/* Secondary CTA */
 .uc-btn--secondary {
   background: rgba(15, 23, 42, 0.6);
   color: #cbd5e1;
@@ -440,7 +428,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   }
 }
 
-/* ---- Footer ---- */
 .uc-footer {
   margin-top: 4rem;
 }
@@ -451,9 +438,9 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   margin: 0;
 }
 
-/* ---- Pulse keyframe ---- */
 @keyframes uc-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4);
   }
   50% {
@@ -461,7 +448,6 @@ const linkedinUrl = 'https://www.linkedin.com/in/michael-adewumi/'
   }
 }
 
-/* ---- Responsive ---- */
 @media (max-width: 640px) {
   .uc-content {
     padding: 1.5rem 1rem;

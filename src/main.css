@@ -21,13 +21,16 @@
     @apply dark:bg-[#0d1117] dark:text-slate-100;
   }
 
-  /* Force all headings to be white in dark mode */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-display;
     @apply dark:text-white;
   }
 
-  /* Force all paragraph/body text to be readable in dark mode */
   p {
     @apply dark:text-slate-300;
   }
@@ -51,7 +54,6 @@
     @apply py-16 px-4 sm:px-6 sm:py-20 lg:py-24;
   }
 
-  /* Cards — reduced hover, better dark contrast */
   .surface-card {
     @apply rounded-[1.5rem] border border-white/80 bg-white/90 shadow-soft backdrop-blur sm:rounded-[2rem];
     @apply dark:border-slate-600/40 dark:bg-slate-800/80 dark:shadow-slate-900/40;
@@ -88,7 +90,6 @@
   }
 }
 
-/* Reveal animations */
 .reveal {
   opacity: 0;
   transform: translate3d(0, 32px, 0);
@@ -98,15 +99,15 @@
   will-change: opacity, transform;
 }
 
-.reveal[data-reveal-origin='left'] {
+.reveal[data-reveal-origin="left"] {
   transform: translate3d(-16px, 0, 0);
 }
 
-.reveal[data-reveal-origin='right'] {
+.reveal[data-reveal-origin="right"] {
   transform: translate3d(16px, 0, 0);
 }
 
-.reveal[data-reveal-origin='scale'] {
+.reveal[data-reveal-origin="scale"] {
   transform: scale(0.96);
 }
 
@@ -116,10 +117,29 @@
 }
 
 @keyframes pulse-subtle {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3); }
-  50%       { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+  }
 }
 
 .animate-pulse-subtle {
   animation: pulse-subtle 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-pulse-subtle {
+    animation: none !important;
+  }
 }

@@ -1,22 +1,29 @@
-import {ref, watch, onMounted} from 'vue';
+import { ref, watch } from "vue";
 
-const isDark = ref(true)
+const isDark = ref(true);
 
-// export function useDarkMode() {
-    const apply = (dark) => {
-        document.documentElement.classList.toggle('dark', dark)
-        localStorage.setItem('theme', dark ? 'dark' : 'light')
-    }
+const apply = (dark) => {
+  if (typeof document !== "undefined") {
+    document.documentElement.classList.toggle("dark", dark);
+  }
+  try {
+    localStorage.setItem("theme", dark ? "dark" : "light");
+  } catch (e) {}
+};
 
-    const saved = localStorage.getItem('theme') 
-    isDark.value = saved ? saved === 'dark' : true 
-    apply(isDark.value)
+try {
+  const saved = localStorage.getItem("theme");
+  isDark.value = saved ? saved === "dark" : true;
+} catch (e) {
+  isDark.value = true;
+}
 
-    watch(isDark,apply)
+apply(isDark.value);
+watch(isDark, apply);
 
-    export function useDarkMode() {
-        const toggle = () => {
-            isDark.value = !isDark.value
-        }
-        return { isDark, toggle}
-    }
+export function useDarkMode() {
+  const toggle = () => {
+    isDark.value = !isDark.value;
+  };
+  return { isDark, toggle };
+}

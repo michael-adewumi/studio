@@ -4,7 +4,7 @@ defineProps({
   label: String,
   type: {
     type: String,
-    default: 'text'
+    default: "text",
   },
   placeholder: String,
   required: Boolean,
@@ -12,25 +12,27 @@ defineProps({
   error: String,
   variant: {
     type: String,
-    default: 'light' // 'light' or 'dark'
+    default: "light",
   },
   id: {
     type: String,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
-defineEmits(['update:modelValue'])
+defineEmits(["update:modelValue"]);
 </script>
 
 <template>
   <div class="w-full">
-    <label 
-      v-if="label" 
-      :for="id" 
-      class="mb-1.5 block text-sm font-medium transition-colors duration-200" 
+    <label
+      v-if="label"
+      :for="id"
+      class="mb-1.5 block text-sm font-medium transition-colors duration-200"
       :class="[
-        variant === 'dark' ? 'text-slate-400' : 'text-slate-700 dark:text-slate-300'
+        variant === 'dark'
+          ? 'text-slate-400'
+          : 'text-slate-700 dark:text-slate-300',
       ]"
     >
       {{ label }}
@@ -45,11 +47,13 @@ defineEmits(['update:modelValue'])
         :placeholder="placeholder"
         :required="required"
         :disabled="disabled"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? `${id}-error` : undefined"
         class="w-full outline-none transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
         :class="[
           variant === 'dark'
             ? 'rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500'
-            : 'rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-950 placeholder-slate-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100'
+            : 'rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-950 placeholder-slate-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-900',
         ]"
       />
       <textarea
@@ -60,17 +64,18 @@ defineEmits(['update:modelValue'])
         :placeholder="placeholder"
         :required="required"
         :disabled="disabled"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? `${id}-error` : undefined"
         rows="4"
         class="w-full resize-none outline-none transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
         :class="[
           variant === 'dark'
             ? 'rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500'
-            : 'rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-950 placeholder-slate-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100'
+            : 'rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-950 placeholder-slate-400 focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-900',
         ]"
       ></textarea>
-      
-      <!-- Subtle highlight effect on hover for premium feel -->
-      <div 
+
+      <div
         v-if="!disabled"
         class="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-brand-500/0 transition-all duration-300 group-hover:ring-brand-500/10"
       ></div>
@@ -83,7 +88,13 @@ defineEmits(['update:modelValue'])
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <p v-if="error" class="mt-1.5 text-xs font-medium" :class="variant === 'dark' ? 'text-rose-400' : 'text-rose-500'">
+      <p
+        v-if="error"
+        :id="`${id}-error`"
+        role="alert"
+        class="mt-1.5 text-xs font-medium"
+        :class="variant === 'dark' ? 'text-rose-400' : 'text-rose-500'"
+      >
         {{ error }}
       </p>
     </Transition>

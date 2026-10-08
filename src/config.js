@@ -1,1 +1,1 @@
-export const SHEET_URL = import.meta.env.VITE_SHEET_URL
+export const SHEET_URL = import.meta.env.VITE_SHEET_URL;
